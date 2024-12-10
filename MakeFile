@@ -1,0 +1,21 @@
+CC = gcc
+CFLAGS = -Wall
+CPPFLAGS = -I.
+
+sources = main.c fonctions.c
+objects = $(sources:.c=.o)
+dependencies = $(sources:.c=.d)
+
+-include $(dependencies)
+
+naismul: $(objects)
+	$(CC) -o $@ $^
+
+%.d: %.c
+	@set -e; rm -f $@; \
+	$(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+clean:
+	$(RM) *.d *.o naismul
